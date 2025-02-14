@@ -10,6 +10,8 @@ import {
 import axiosObj from "../config/Axios";
 import { NavLink } from "react-router-dom";
 
+import { PlusIcon } from "lucide-react";
+
 function App() {
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -65,22 +67,22 @@ function App() {
         },
     });
 
+    console.log(table);
+    
     if (loading) return <div>Loading...</div>;
     if (error) return <div>Error: {error}</div>;
 
     return (
-        <div className="p-4">
-            <div className="flex justify-end">
-                    <NavLink to="/employee/new">
-                    <div className="w-14 bg-gray-300 p-4 border border-gray-600 text-right">
+        <div className="p-4 bg-white shadow-md rounded-lg">
+            <div className="flex justify-between items-center mb-4">
+                <h1 className="text-xl font-semibold">Employee Records</h1>
+                <NavLink to="/employee/new" className="bg-gray-500 text-white p-2 rounded-lg hover:bg-gray-600">
+                    {/* ➕  */}
+                    <PlusIcon/>
+                    {/* Add Employee */}
+                </NavLink>
 
-                    ➕
-                    </div>
-
-                    </NavLink>
-                    
             </div>
-            <h1 className="text-xl font-bold mb-4">Employee Table</h1>
 
             <input
                 type="text"
@@ -90,7 +92,7 @@ function App() {
                     setGlobalFilter(e.target.value);
                     table.setPageIndex(0);
                 }}
-                className="border p-2 mb-4 w-full"
+                className="border p-2 mb-4 w-full rounded-lg focus:ring-2 focus:ring-gray-500 focus:outline-none"
             />
 
             <table className="border-collapse border border-gray-300 w-full">
@@ -131,25 +133,44 @@ function App() {
                 </tbody>
             </table>
 
-            <div className="flex items-center gap-2 mt-4">
-                <button onClick={() => table.setPageIndex(0)} disabled={!table.getCanPreviousPage()}>
-                    {"<<"}
-                </button>
-                <button onClick={() => table.previousPage()} disabled={!table.getCanPreviousPage()}>
-                    {"<"}
-                </button>
-                <button onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>
-                    {">"}
-                </button>
-                <button onClick={() => table.setPageIndex(table.getPageCount() - 1)} disabled={!table.getCanNextPage()}>
-                    {">>"}
-                </button>
+            <div className="flex items-center justify-between mt-4">
+                <div className="flex gap-2">
+                    <button
+                        onClick={() => table.setPageIndex(0)}
+                        disabled={!table.getCanPreviousPage()}
+                        className="px-3 py-1 border rounded-md disabled:opacity-50"
+                    >
+                        {"<<"}
+                    </button>
+                    <button
+                        onClick={() => table.previousPage()}
+                        disabled={!table.getCanPreviousPage()}
+                        className="px-3 py-1 border rounded-md disabled:opacity-50"
+                    >
+                        {"<"}
+                    </button>
+                    <button
+                        onClick={() => table.nextPage()}
+                        disabled={!table.getCanNextPage()}
+                        className="px-3 py-1 border rounded-md disabled:opacity-50"
+                    >
+                        {">"}
+                    </button>
+                    <button
+                        onClick={() => table.setPageIndex(table.getPageCount() - 1)}
+                        disabled={!table.getCanNextPage()}
+                        className="px-3 py-1 border rounded-md disabled:opacity-50"
+                    >
+                        {">>"}
+                    </button>
+                </div>
                 <span>
                     Page {pagination.pageIndex + 1} of {table.getPageCount()}
                 </span>
                 <select
                     value={pagination.pageSize}
                     onChange={(e) => table.setPageSize(Number(e.target.value))}
+                    className="border p-2 rounded-md"
                 >
                     {[5, 10, 20, 30, 40, 50].map((size) => (
                         <option key={size} value={size}>
@@ -159,7 +180,7 @@ function App() {
                 </select>
             </div>
 
-            <div>
+            <div className="text-sm text-gray-600 mt-2">
                 Showing {table.getRowModel().rows.length} of {table.getPrePaginationRowModel().rows.length} rows
             </div>
         </div>

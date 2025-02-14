@@ -27,7 +27,7 @@ const Sidebar = () => {
           </NavLink>
         </li>
         <li>
-          <NavLink to="/salary" className="flex items-center p-3 hover:bg-gray-700">
+          <NavLink to="/salary/manage" className="flex items-center p-3 hover:bg-gray-700">
             <FaMoneyBill className="text-xl" />
             {!isCollapsed && <span className="ml-4">Salary</span>}
           </NavLink>

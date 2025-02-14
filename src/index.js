@@ -12,6 +12,7 @@ import Layout from './pages/Layout';
 import { SocketProvider } from './context/SocketContext';
 import AddEmployeePage from './pages/AddEmployeePage';
 import App from './pages/Try';
+import AddSalaryPage from './pages/AddSalaryPage';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -26,7 +27,8 @@ root.render(
           <Route index element={<SocketProvider><HomePage /></SocketProvider> } />
           <Route path='employee/manage' element={<EmployeePage />} />
           <Route path='employee/new' element={<AddEmployeePage />} />
-          <Route path='salary' element={<SalaryPage />} />
+          <Route path='salary/manage' element={<SalaryPage />} />
+          <Route path='salary/new' element={<AddSalaryPage />} />
           <Route path='try' element={<App />} />
         </Route>
         <Route path="/login" element={<Login />} />
