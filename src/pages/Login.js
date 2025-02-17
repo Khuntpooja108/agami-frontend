@@ -25,6 +25,9 @@ function Login() {
         alert(response.data.message)
       } else {
         localStorage.setItem("accessToken", response.data.data.accessToken)
+        localStorage.setItem("refreshToken", response.data.data.refreshToken)
+        console.log("from refreshtoken ",response.data.data.refreshToken);
+
         alert("Login successful!");
         console.log(response.data);
 

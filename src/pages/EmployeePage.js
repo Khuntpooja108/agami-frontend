@@ -22,9 +22,9 @@ function App() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axiosObj.get("/api/employees", { validateStatus: () => true })
-                console.log(response.data);
-
+                const response = await axiosObj.get("/api/employees")
+                // console.log(response.data);
+               
                 if (response.data?.result !== 0) {
 
                     setData(response.data.data);
@@ -33,6 +33,8 @@ function App() {
 
                 }
             } catch (err) {
+                console.log("from error");
+                
                 setError(err.message);
             } finally {
                 setLoading(false);
@@ -67,7 +69,7 @@ function App() {
         },
     });
 
-    console.log(table);
+    // console.log(table);
     
     if (loading) return <div>Loading...</div>;
     if (error) return <div>Error: {error}</div>;
