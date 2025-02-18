@@ -29,6 +29,8 @@ root.render(
           <Route path='employee/new' element={<AddEmployeePage />} />
           <Route path='salary/manage' element={<SalaryPage />} />
           <Route path='salary/new' element={<AddSalaryPage />} />
+          <Route path="employee/edit/:id" element={<AddEmployeePage />} />
+
           <Route path='try' element={<App />} />
         </Route>
         <Route path="/login" element={<Login />} />

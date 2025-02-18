@@ -1,41 +1,83 @@
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
+import ReactDOM from "react-dom";
 import {
-    flexRender,
     useReactTable,
     getCoreRowModel,
-    getFilteredRowModel,
     getPaginationRowModel,
+    getFilteredRowModel,
     getSortedRowModel,
+    flexRender,
 } from "@tanstack/react-table";
 import axiosObj from "../config/Axios";
 import { NavLink } from "react-router-dom";
 import { PlusIcon } from "lucide-react";
+import { useDebounce } from "use-debounce";
 
 function SalaryPage() {
+
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [globalFilter, setGlobalFilter] = useState("");
-    const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 5 });
+    const [searchTerm, setSearchTerm] = useState(""); 
+    const [globalFilter, setGlobalFilter] = useState(""); 
+        const [debouncedFilter] = useDebounce(globalFilter, 500); 
+    
+    const [pagination, setPagination] = useState({
+        pageIndex: 0,
+        pageSize: 5,
+        totalRecords: 0,
+    });
+
+
+    const fetchData = async () => {
+        try {
+            setLoading(true);
+
+            const { pageIndex, pageSize } = pagination;
+
+            const offset = pageIndex * pageSize;
+
+
+            const response = await axiosObj.get("/api/salaries", {
+                params: {
+                    limit: pageSize,
+                    offset: offset,
+                    filter: debouncedFilter,
+                },
+            });
+            console.log("Response Data:", response.data);
+
+
+            if (response.data?.result !== 0) {
+
+                setData(response.data.data.data);
+
+                if (response.data.data.totalRecords !== pagination.totalRecords) {
+                    setPagination((prev) => ({
+                        ...prev,
+                        totalRecords: response.data.data.totalRecords,
+                    }));
+                }
+            } else {
+                    setData([]); 
+
+                    //throw new Error("Failed to fetch salary data.");
+            }
+        } catch (err) {
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
 
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await axiosObj.get("/api/salaries", { validateStatus: () => true });
-                if (response.data?.result !== 0) {
-                    setData(response.data.data);
-                } else {
-                    throw new Error("Failed to fetch salary data.");
-                }
-            } catch (err) {
-                setError(err.message);
-            } finally {
-                setLoading(false);
-            }
-        };
-
         fetchData();
-    }, []);
+    }, [pagination.pageIndex, pagination.pageSize, debouncedFilter]);
+
+
+    const totalPages = Math.ceil(pagination.totalRecords / pagination.pageSize);
+
 
     const columns = useMemo(
         () => [
@@ -47,13 +89,16 @@ function SalaryPage() {
         []
     );
 
+
+
     const table = useReactTable({
         data,
         columns,
         getCoreRowModel: getCoreRowModel(),
-        getSortedRowModel: getSortedRowModel(),
-        getFilteredRowModel: getFilteredRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
+        getFilteredRowModel: getFilteredRowModel(),
+        getSortedRowModel: getSortedRowModel(),
+        manualPagination: true,
         onPaginationChange: setPagination,
         state: { pagination, globalFilter },
         onGlobalFilterChange: (filter) => {
@@ -62,30 +107,38 @@ function SalaryPage() {
         },
     });
 
+
     if (loading) return <div className="text-center p-4">Loading...</div>;
     if (error) return <div className="text-center p-4 text-red-500">Error: {error}</div>;
 
+
     return (
         <div className="p-4 bg-white shadow-md rounded-lg">
+
             <div className="flex justify-between items-center mb-4">
                 <h1 className="text-xl font-semibold">Salary Records</h1>
-                <NavLink to="/salary/new" className="bg-gray-500 text-white p-2 rounded-lg hover:bg-gray-600">
-                    {/* ➕ Add Salary */}
-                    <PlusIcon/>
-
+                <NavLink
+                    to="/salary/new"
+                    className="bg-gray-500 text-white p-2 rounded-lg hover:bg-gray-600"
+                >
+                    <PlusIcon />
                 </NavLink>
             </div>
+
 
             <input
                 type="text"
                 placeholder="Search..."
                 value={globalFilter}
-                onChange={(e) => {
-                    setGlobalFilter(e.target.value);
-                    table.setPageIndex(0);
-                }}
+                onChange={(e) =>{ setGlobalFilter(e.target.value);
+                    setPagination((prev)=>({...prev,pageIndex:0})
+                )}
+                }
                 className="border p-2 mb-4 w-full rounded-lg focus:ring-2 focus:ring-gray-500 focus:outline-none"
             />
+
+
+
 
             <table className="border-collapse border border-gray-300 w-full">
                 <thead>
@@ -97,8 +150,17 @@ function SalaryPage() {
                                     className="border border-gray-300 p-2 cursor-pointer"
                                     onClick={header.column.getToggleSortingHandler()}
                                 >
-                                    {flexRender(header.column.columnDef.header, header.getContext())}
-                                    {header.column.getIsSorted() ? (header.column.getIsSorted() === "asc" ? " 🔼" : " 🔽") : ""}
+                                    {header.isPlaceholder
+                                        ? null
+                                        : flexRender(
+                                            header.column.columnDef.header,
+                                            header.getContext()
+                                        )}
+                                    {header.column.getIsSorted()
+                                        ? header.column.getIsSorted() === "asc"
+                                            ? " 🔼"
+                                            : " 🔽"
+                                        : ""}
                                 </th>
                             ))}
                         </tr>
@@ -125,44 +187,56 @@ function SalaryPage() {
                 </tbody>
             </table>
 
+
             <div className="flex items-center justify-between mt-4">
                 <div className="flex gap-2">
                     <button
-                        onClick={() => table.setPageIndex(0)}
-                        disabled={!table.getCanPreviousPage()}
-                        className="px-3 py-1 border rounded-md disabled:opacity-50"
+                        onClick={() => setPagination((prev) => ({ ...prev, pageIndex: 0 }))}
+                        disabled={pagination.pageIndex === 0}
+                        className="px-3 py-1 border rounded disabled:opacity-50"
                     >
                         {"<<"}
                     </button>
                     <button
-                        onClick={() => table.previousPage()}
-                        disabled={!table.getCanPreviousPage()}
-                        className="px-3 py-1 border rounded-md disabled:opacity-50"
+                        onClick={() =>
+                            setPagination((prev) => ({ ...prev, pageIndex: prev.pageIndex - 1 }))
+                        }
+                        disabled={pagination.pageIndex === 0}
+                        className="px-3 py-1 border rounded disabled:opacity-50"
                     >
                         {"<"}
                     </button>
                     <button
-                        onClick={() => table.nextPage()}
-                        disabled={!table.getCanNextPage()}
-                        className="px-3 py-1 border rounded-md disabled:opacity-50"
+                        onClick={() =>
+                            setPagination((prev) => ({ ...prev, pageIndex: prev.pageIndex + 1 }))
+                        }
+                        disabled={pagination.pageIndex >= totalPages - 1}
+                        className="px-3 py-1 border rounded disabled:opacity-50"
                     >
                         {">"}
                     </button>
                     <button
-                        onClick={() => table.setPageIndex(table.getPageCount() - 1)}
-                        disabled={!table.getCanNextPage()}
-                        className="px-3 py-1 border rounded-md disabled:opacity-50"
+                        onClick={() =>
+                            setPagination((prev) => ({ ...prev, pageIndex: totalPages - 1 }))
+                        }
+                        disabled={pagination.pageIndex >= totalPages - 1}
+                        className="px-3 py-1 border rounded disabled:opacity-50"
                     >
                         {">>"}
                     </button>
                 </div>
                 <span>
-                    Page {pagination.pageIndex + 1} of {table.getPageCount()}
+                    Page {pagination.pageIndex + 1} of {totalPages}
                 </span>
                 <select
                     value={pagination.pageSize}
-                    onChange={(e) => table.setPageSize(Number(e.target.value))}
-                    className="border p-2 rounded-md"
+                    onChange={(e) =>
+                        setPagination((prev) => ({
+                            ...prev,
+                            pageSize: Number(e.target.value),
+                        }))
+                    }
+                    className="border p-2 rounded"
                 >
                     {[5, 10, 20, 30, 40, 50].map((size) => (
                         <option key={size} value={size}>
@@ -172,8 +246,9 @@ function SalaryPage() {
                 </select>
             </div>
 
+
             <div className="text-sm text-gray-600 mt-2">
-                Showing {table.getRowModel().rows.length} of {table.getPrePaginationRowModel().rows.length} records
+                Showing {data.length} of {pagination.totalRecords} rows
             </div>
         </div>
     );
