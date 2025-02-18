@@ -9,19 +9,23 @@ import {
     flexRender,
 } from "@tanstack/react-table";
 import axiosObj from "../config/Axios";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { PlusIcon } from "lucide-react";
 import { useDebounce } from "use-debounce";
+import { FaEdit, FaTrashAlt } from 'react-icons/fa';
+
 
 function SalaryPage() {
 
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [searchTerm, setSearchTerm] = useState(""); 
-    const [globalFilter, setGlobalFilter] = useState(""); 
-        const [debouncedFilter] = useDebounce(globalFilter, 500); 
-    
+    const [globalFilter, setGlobalFilter] = useState("");
+    const [debouncedFilter] = useDebounce(globalFilter, 500);
+
+    const navigate = useNavigate();
+
+
     const [pagination, setPagination] = useState({
         pageIndex: 0,
         pageSize: 5,
@@ -59,14 +63,28 @@ function SalaryPage() {
                     }));
                 }
             } else {
-                    setData([]); 
+                setData([]);
 
-                    //throw new Error("Failed to fetch salary data.");
+                //throw new Error("Failed to fetch salary data.");
             }
         } catch (err) {
             setError(err.message);
         } finally {
             setLoading(false);
+        }
+    };
+
+
+    const handleDeleteSalary = async (id) => {
+        if (window.confirm("Are you sure you want to delete this salary?")) {
+            try {
+                const response = await axiosObj.delete(`/api/salary/${id}`);
+                alert(response.data.message);
+                fetchData();
+            } catch (error) {
+                console.error("Error deleting salary:", error);
+                alert("Failed to delete salary");
+            }
         }
     };
 
@@ -130,9 +148,11 @@ function SalaryPage() {
                 type="text"
                 placeholder="Search..."
                 value={globalFilter}
-                onChange={(e) =>{ setGlobalFilter(e.target.value);
-                    setPagination((prev)=>({...prev,pageIndex:0})
-                )}
+                onChange={(e) => {
+                    setGlobalFilter(e.target.value);
+                    setPagination((prev) => ({ ...prev, pageIndex: 0 })
+                    )
+                }
                 }
                 className="border p-2 mb-4 w-full rounded-lg focus:ring-2 focus:ring-gray-500 focus:outline-none"
             />
@@ -163,6 +183,8 @@ function SalaryPage() {
                                         : ""}
                                 </th>
                             ))}
+                            <th className="border border-gray-300 p-2 cursor-pointer"
+                            >Actions</th>
                         </tr>
                     ))}
                 </thead>
@@ -175,6 +197,18 @@ function SalaryPage() {
                                         {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                     </td>
                                 ))}
+                                <td className="border border-gray-300 p-2 text-center flex justify-center gap-4">
+                                    <FaEdit
+                                        className="text-blue-500 cursor-pointer"
+                                        onClick={() => navigate(`/salary/edit/${row.original.sid}`)}
+                                        title="Edit Salary"
+                                    />
+                                    <FaTrashAlt
+                                        className="text-red-500 cursor-pointer"
+                                        onClick={() => handleDeleteSalary(row.original.sid)}
+                                        title="Delete Salary"
+                                    />
+                                </td>
                             </tr>
                         ))
                     ) : (

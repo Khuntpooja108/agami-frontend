@@ -3,7 +3,7 @@ import axiosObj from '../config/Axios';
 import { useNavigate, useParams } from 'react-router-dom';
 
 function AddEmployeePage() {
-  const { id } = useParams(); // Get employee ID from URL (if in edit mode)
+  const { id } = useParams(); 
   const [password, setPassword] = useState("");
   const [conpassword, setConpassword] = useState("");
   const [email, setEmail] = useState("");
@@ -15,7 +15,7 @@ function AddEmployeePage() {
     console.log("useeffect");
     
     if (id) {
-      // Fetch the employee data if editing
+      
       const fetchEmployee = async () => {
         try {
           const response = await axiosObj.get(`/api/employee/${id}`);
@@ -50,10 +50,10 @@ function AddEmployeePage() {
     try {
       let response;
       if (id) {
-        // Update employee if in edit mode
+        
         response = await axiosObj.put(`/api/employee/${id}`, employeeData, { validateStatus: () => true });
       } else {
-        // Add new employee
+        
         response = await axiosObj.post("/api/employee", employeeData, { validateStatus: () => true });
       }
 
@@ -115,7 +115,7 @@ function AddEmployeePage() {
             />
           </div>
 
-          {!id && (  // Password fields only visible in add mode
+          {!id && (  
             <>
               <div className="mb-3">
                 <label className="block text-gray-700 text-sm font-semibold mb-2">Password</label>

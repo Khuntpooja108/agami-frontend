@@ -15,24 +15,6 @@ import { useDebounce } from "use-debounce";
 import { FaEdit, FaTrashAlt } from 'react-icons/fa';
 import { useNavigate, } from 'react-router-dom';
 
-
-
-const useDebouncedValue = (inputValue, delay) => {
-    const [debouncedValue, setDebouncedValue] = useState(inputValue);
-
-    useEffect(() => {
-        const handler = setTimeout(() => {
-            setDebouncedValue(inputValue);
-        }, delay);
-
-        return () => {
-            clearTimeout(handler);
-        };
-    }, [inputValue, delay]);
-
-    return debouncedValue;
-};
-
 function EmployeePage() {
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -192,6 +174,8 @@ function EmployeePage() {
                                         : ""}
                                 </th>
                             ))}
+                            <th className="border border-gray-300 p-2 cursor-pointer"
+                            >Actions</th>
                         </tr>
                     ))}
                 </thead>
@@ -206,7 +190,7 @@ function EmployeePage() {
 
                                 ))}
 
-<td className="border border-gray-300 p-2 text-center flex justify-center gap-4">
+                                <td className="border border-gray-300 p-2 text-center flex justify-center gap-4">
                                     <FaEdit
                                         className="text-blue-500 cursor-pointer"
                                         onClick={() => navigate(`/employee/edit/${row.original.eid}`)}
