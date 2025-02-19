@@ -30,7 +30,7 @@ axiosObj.interceptors.response.use(
       console.log("Response Interceptor Error:", error.response?.status);
 
       if (error.response?.status === 403) {
-          console.log("🔄 Token Expired, Refreshing...");
+          console.log(" Token Expired, Refreshing...");
 
           const refreshToken = localStorage.getItem("refreshToken");
           console.log("from refreshtoken ",refreshToken);

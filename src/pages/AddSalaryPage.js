@@ -8,6 +8,7 @@ function AddSalaryPage() {
   const [eid, setEid] = useState("");
   const [samount, setSamount] = useState("");
   const navigate = useNavigate();
+  const [employeeList, setEmployeeList] = useState([]);
 
 
   useEffect(() => {
@@ -30,6 +31,19 @@ function AddSalaryPage() {
       fetchSalary();
     }
   }, [id]);
+
+  useEffect(() => {
+    const fetchEmployees = async () => {
+      try {
+        const response = await axiosObj.get("/api/employeesid");
+        setEmployeeList(response.data.data); 
+      } catch (error) {
+        console.error("Error fetching employee list:", error);
+        alert("Error fetching employee list")
+      }
+    };
+    fetchEmployees();
+  }, []);
 
   const handleAddOrEditSalary= async (e) => {
     e.preventDefault();
@@ -72,14 +86,27 @@ function AddSalaryPage() {
             <label className="block text-gray-700 text-sm font-semibold mb-2">
               Employee ID
             </label>
-            <input
+            <select
+              className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-gray-500 focus:outline-none"
+              value={eid}
+              required
+              onChange={(e) => setEid(e.target.value)}
+            >
+              <option value="">Select Employee ID</option>
+              {employeeList.map(empId => (
+                <option key={empId} value={empId}>
+                  {empId}
+                </option>
+              ))}
+            </select>
+            {/* <input
               type="text"
               placeholder="Enter Employee ID"
               className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-gray-500 focus:outline-none"
               value={eid}
               required
               onChange={(e) => setEid(e.target.value)}
-            />
+            /> */}
           </div>
 
           <div className="mb-3">
