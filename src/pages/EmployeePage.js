@@ -192,12 +192,12 @@ function EmployeePage() {
 
                                 <td className="border border-gray-300 p-2 text-center flex justify-center gap-4">
                                     <FaEdit
-                                        className="text-blue-500 cursor-pointer"
+                                        className=" cursor-pointer"
                                         onClick={() => navigate(`/employee/edit/${row.original.eid}`)}
                                         title="Edit Employee"
-                                    />
+                                    />  
                                     <FaTrashAlt
-                                        className="text-red-500 cursor-pointer"
+                                        className="cursor-pointer"
                                         onClick={() => handleDeleteEmployee(row.original.eid)}
                                         title="Delete Employee"
                                     />

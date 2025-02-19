@@ -199,12 +199,12 @@ function SalaryPage() {
                                 ))}
                                 <td className="border border-gray-300 p-2 text-center flex justify-center gap-4">
                                     <FaEdit
-                                        className="text-blue-500 cursor-pointer"
+                                        className="cursor-pointer"
                                         onClick={() => navigate(`/salary/edit/${row.original.sid}`)}
                                         title="Edit Salary"
                                     />
                                     <FaTrashAlt
-                                        className="text-red-500 cursor-pointer"
+                                        className="cursor-pointer"
                                         onClick={() => handleDeleteSalary(row.original.sid)}
                                         title="Delete Salary"
                                     />
