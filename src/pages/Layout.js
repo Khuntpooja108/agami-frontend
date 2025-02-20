@@ -15,14 +15,16 @@ function Layout() {
       localStorage.removeItem("user");
       window.location.href="/login"
     }
-  },[isLoggedIn])
+  },
+  [isLoggedIn])
   return (
-    <div className="flex bg-gray-100">
+
+    <div className="flex bg-gray-100 h-screen  overflow-hidden" >
       <SocketProvider>
 
       <Sidebar />
 
-      <div className="flex flex-col flex-1">
+      <div className="flex flex-col flex-1 h-screen">
         <Header isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />
 
         <main className="flex-1">
