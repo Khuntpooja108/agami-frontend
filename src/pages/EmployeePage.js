@@ -96,8 +96,6 @@ function EmployeePage() {
         }
     };
 
-
-
     const handleDeleteEmployee = async (id) => {
         if (window.confirm("Are you sure you want to delete this employee?")) {
             try {
@@ -174,8 +172,8 @@ function EmployeePage() {
             );
             if (response.data?.result !== 0) {
               const updatedEmployee = { ...editingEmployee, ...employeeData };
-              console.log("=e===",editingEmployee);
-              console.log("====",employeeData);
+            //   console.log("=e===",editingEmployee);
+            //   console.log("====",employeeData);
               
               setData(prevData =>
                 prevData.map(emp =>

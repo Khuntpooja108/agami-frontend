@@ -1,8 +1,28 @@
 import { Outlet } from "react-router-dom";
+import { useSocket } from "../context/SocketContext";
+import { useEffect } from "react";
+
+
 
 function Header({ isLoggedIn, setIsLoggedIn }) {
   const profile=JSON.parse(localStorage.getItem("profile"))
-  console.log(profile?.name);
+ /*  const { socket, isConnected } = useSocket();
+
+
+  useEffect(() => {
+    const sendMessage = () => {
+      if (socket.id) {
+        socket.emit("message", "My id is: " + socket.id);
+      }
+    };
+
+    if (socket.connected) {
+      sendMessage();
+    } else {
+      socket.on("connect", sendMessage);
+    }
+
+  }, [socket]); */
   
   return (
     <>

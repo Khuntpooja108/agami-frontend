@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { FaTachometerAlt, FaUser, FaMoneyBill } from 'react-icons/fa';
+import { FaTachometerAlt, FaUser, FaMoneyBill, FaComments } from 'react-icons/fa';
 
 const Sidebar = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -30,6 +30,12 @@ const Sidebar = () => {
           <NavLink to="/salary/manage" className="flex items-center p-3 hover:bg-gray-700">
             <FaMoneyBill className="text-xl" />
             {!isCollapsed && <span className="ml-4">Salary</span>}
+          </NavLink>
+        </li>
+        <li>
+          <NavLink to="/chat" className="flex items-center p-3 hover:bg-gray-700">
+            <FaComments className="text-xl" />
+            {!isCollapsed && <span className="ml-4">Chat</span>}
           </NavLink>
         </li>
       </ul>

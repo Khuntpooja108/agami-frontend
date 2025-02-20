@@ -2,11 +2,13 @@ import '../App.css';
 import { useState } from 'react';
 import axios from 'axios';
 import axiosObj from "../config/Axios";
+import { useSocket } from '../context/SocketContext';
 
 
 function Login() {
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
+  const { setUser } = useSocket();
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -35,9 +37,12 @@ function Login() {
 
 
         const pf = await axiosObj.get("/auth/profile", { validateStatus: () => true });
-        console.log(pf.data.data.profile);
         
-        localStorage.setItem("profile",JSON.stringify(pf.data.data.profile))
+        const user=pf.data.data.profile
+        localStorage.setItem("profile",JSON.stringify(user))
+        localStorage.setItem("user",JSON.stringify(user))
+        setUser(user);
+
         
         window.location.href = "/";
 
