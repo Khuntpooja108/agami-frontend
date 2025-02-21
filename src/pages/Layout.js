@@ -18,13 +18,13 @@ function Layout() {
   },
   [isLoggedIn])
   return (
-
-    <div className="flex bg-gray-100 h-screen  overflow-hidden" >
+// h-screen  overflow-hidden
+    <div className="flex bg-gray-100 " >
       <SocketProvider>
 
       <Sidebar />
-
-      <div className="flex flex-col flex-1 h-screen">
+{/*  h-screen */}
+      <div className="flex flex-col flex-1">
         <Header isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />
 
         <main className="flex-1">

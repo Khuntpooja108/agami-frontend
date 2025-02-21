@@ -26,10 +26,13 @@ import DialogActions from "@mui/material/DialogActions";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import IconButton from "@mui/material/IconButton";
+import { SocketProvider, useSocket } from "../context/SocketContext";
 
 
 
 function EmployeePage() {
+    const {socket}=useSocket();
+
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -100,6 +103,8 @@ function EmployeePage() {
         if (window.confirm("Are you sure you want to delete this employee?")) {
             try {
                 const response = await axiosObj.delete(`/api/employee/${id}`);
+                socket.emit("employee_updated");
+
                 alert(response.data.message);
                 fetchData();
             } catch (error) {
@@ -180,6 +185,8 @@ function EmployeePage() {
                   emp.eid === updatedEmployee.eid ? updatedEmployee : emp
                 )
               );
+              socket.emit("employee_updated");
+
               alert(response.data.message);
               handleCloseDialog();
             } else {
@@ -192,7 +199,12 @@ function EmployeePage() {
               { validateStatus: () => true }
             );
             if (response.data?.result !== 0) {
+                
+
+                socket.emit("employee_updated");
               alert(response.data.message);
+              
+              fetchData();
               handleCloseDialog();
             } else {
               alert(response.data.message);

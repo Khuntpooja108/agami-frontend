@@ -13,9 +13,11 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { PlusIcon } from "lucide-react";
 import { useDebounce } from "use-debounce";
 import { FaEdit, FaTrashAlt } from 'react-icons/fa';
+import { useSocket } from "../context/SocketContext";
 
 
 function SalaryPage() {
+    const {socket}=useSocket();
 
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -53,6 +55,7 @@ function SalaryPage() {
 
 
             if (response.data?.result !== 0) {
+                socket.emit("employee_updated");
 
                 setData(response.data.data.data);
 
@@ -79,6 +82,8 @@ function SalaryPage() {
         if (window.confirm("Are you sure you want to delete this salary?")) {
             try {
                 const response = await axiosObj.delete(`/api/salary/${id}`);
+                socket.emit("employee_updated");
+
                 alert(response.data.message);
                 fetchData();
             } catch (error) {

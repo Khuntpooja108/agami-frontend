@@ -19,6 +19,8 @@ const Chat = () => {
         });
 
         socket.on("receive_message", (data) => {
+            console.log("receive called");
+            
             if (selectedAdmin?.id === data.senderId || selectedAdmin?.id === data.receiverId) {
                 setMessages((prev) => [...prev, data]);
             }
@@ -57,14 +59,11 @@ const Chat = () => {
     return (
         <div className="flex ">
 
-            {/* Sidebar for Admins */}
             <div className="w-1/4 bg-gray-100 border-r h-screen flex flex-col ">
-                {/* Sticky Title (Only Title Stays Sticky, Not Whole Sidebar) */}
                 <h2 className="text-xl font-semibold p-4 border-b bg-gray-100 sticky top-[72px] z-20">
                     Chats
                 </h2>
 
-                {/* Scrollable Admin List */}
                 <div className="flex-1 overflow-y-auto">
                     {admins.map((admin) => (
                         <div
@@ -88,7 +87,6 @@ const Chat = () => {
             <div className="w-3/4 flex flex-col bg-gray-200 h-screen pt-[72px]">
                 {selectedAdmin ? (
                     <>
-                        {/* Sticky Chat Header */}
                         <div className="p-4 bg-gray-500 text-white shadow-md flex items-center sticky top-0 z-10">
                             <div className="w-10 h-10 bg-white text-gray-500 rounded-full flex items-center justify-center">
                                 {selectedAdmin.name[0]}
@@ -96,7 +94,6 @@ const Chat = () => {
                             <h2 className="ml-3 text-lg font-semibold">{selectedAdmin.name}</h2>
                         </div>
 
-                        {/* Messages Container */}
                         <div className="flex-1 p-4 overflow-y-auto space-y-2 max-h-full">
                             {messages.map((msg, i) => (
                                 <div key={i} className={`flex w-full ${(msg.senderId || msg.sender_id) === user.id ? "justify-end" : "justify-start"}`}>
@@ -112,7 +109,6 @@ const Chat = () => {
                             <div ref={messagesEndRef} />
                         </div>
 
-                        {/* Message Input */}
                         <div className="p-4 bg-white flex items-center border-t sticky bottom-0">
                             <input
                                 type="text"
