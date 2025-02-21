@@ -19,7 +19,7 @@ const Chat = () => {
         });
 
         socket.on("receive_message", (data) => {
-            console.log("receive called");
+            console.log("receive");
             
             if (selectedAdmin?.id === data.senderId || selectedAdmin?.id === data.receiverId) {
                 setMessages((prev) => [...prev, data]);
